@@ -83,6 +83,10 @@ macOS ties this permission to the exact build, so you have to turn it on again a
 
 Right-click a clip, or click `···`, for everything else. Click the menu bar icon to open Ditty; right-click it for Options and Exit.
 
+## Support
+
+Ditty is free. If it saves you time, you can [buy me a coffee](https://buymeacoffee.com/ahmedchemkC) ☕
+
 ## License
 
 [GPL-3.0](LICENSE), the same licence as Ditto.
