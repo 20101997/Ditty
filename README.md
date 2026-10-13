@@ -27,13 +27,21 @@ Not here yet, compared with Ditto: network sync ("Friends"), import/export (incl
 
 ## Install
 
+With [Homebrew](https://brew.sh):
+
+```sh
+brew install --cask 20101997/tap/ditty
+```
+
+Or by hand:
+
 1. Download **Ditty.zip** from the [latest release](https://github.com/20101997/Ditty/releases/latest) and unzip it.
 2. Drag **Ditty.app** into your Applications folder and open it.
 3. macOS will refuse the first time, because Ditty is not signed with a paid Apple developer certificate. Open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to the message about Ditty.
 
 A 〃 icon appears in the menu bar. Ditty runs on macOS 13 or later, on both Apple Silicon and Intel Macs.
 
-If you prefer the Terminal, this does the same as step 3:
+If you prefer the Terminal, this does the same as step 3 (the Homebrew install does it for you):
 
 ```sh
 xattr -dr com.apple.quarantine /Applications/Ditty.app
