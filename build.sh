@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds build/Ditty.app. Pass --install to also copy it to /Applications and launch it.
+# Builds build/Ditty.app and build/Ditty.zip. Pass --install to also copy it to /Applications and launch it.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -17,8 +17,12 @@ if [[ -f "$SWIFT_INC/module.modulemap" && -f "$SWIFT_INC/bridging.modulemap" ]];
         "$SWIFT_INC/module.modulemap" "$PWD/build/empty.modulemap" > build/vfs.yaml
     OVERLAY=(-vfsoverlay build/vfs.yaml)
 fi
-swiftc -O -swift-version 5 -target "$(uname -m)-apple-macos13.0" ${OVERLAY[@]+"${OVERLAY[@]}"} \
-    -o "$BIN" Sources/Ditty/*.swift -lsqlite3
+# Universal binary, so one download runs on both Apple Silicon and Intel Macs.
+for arch in arm64 x86_64; do
+    swiftc -O -swift-version 5 -target "$arch-apple-macos13.0" ${OVERLAY[@]+"${OVERLAY[@]}"} \
+        -o "$BIN-$arch" Sources/Ditty/*.swift -lsqlite3
+done
+lipo -create "$BIN-arm64" "$BIN-x86_64" -output "$BIN"
 
 rm -rf "$APP" build/AppIcon.iconset
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" build/AppIcon.iconset
@@ -35,6 +39,10 @@ iconutil -c icns build/AppIcon.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 # Ad-hoc signature by default. Set SIGN_ID to a real identity to keep the Accessibility grant across rebuilds.
 codesign --force --sign "${SIGN_ID:--}" "$APP"
 echo "Built $APP"
+
+# The zip attached to GitHub releases.
+rm -f build/Ditty.zip
+ditto -c -k --keepParent "$APP" build/Ditty.zip
 
 if [[ "${1:-}" == "--install" ]]; then
     pkill -x Ditty 2>/dev/null || true
